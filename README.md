@@ -1,6 +1,6 @@
 # image classification on amazon sagemaker studio
 
-![image_classification_training_job/machine_learning_with_sagemaker](image_classification_training_job/machine_learning_with_sagemaker.png)
+![machine_learning_with_sagemaker](machine_learning_with_sagemaker.png)
 Amazon sagemaker is a universal tool for machine learning workflow.
 
 ## purpose
