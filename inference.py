@@ -11,7 +11,6 @@ import torch.nn as nn
 
 logger = logging.getLogger(__name__)
 
-
 def model_fn(model_dir):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(1)
@@ -25,8 +24,8 @@ def model_fn(model_dir):
     print(5)
     
     with open(os.path.join(model_dir, 'model.pth'), 'rb') as f:
-#         model.load_state_dict(torch.load(f, map_location=torch.device('cpu')))
-        model.load_state_dict(torch.load(f))
+        model.load_state_dict(torch.load(f, map_location=device), strict=False)
+#         model.load_state_dict(torch.load(f))
     print(6)    
     model.to(device).eval()
     print(7)
