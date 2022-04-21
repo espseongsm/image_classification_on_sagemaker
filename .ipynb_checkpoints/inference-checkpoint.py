@@ -14,12 +14,10 @@ logger = logging.getLogger(__name__)
 def model_fn(model_dir):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logger.info('Starting loading the model')
-    logger.info('Architecting model\'s structure')
     model = models.resnet18(pretrained=True)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, 2)
     
-    logger.info('Loading the model weights')
     with open(os.path.join(model_dir, 'model.pth'), 'rb') as f:
         model.load_state_dict(torch.load(f, map_location=device))
     model.to(device).eval()
