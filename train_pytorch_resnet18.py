@@ -25,11 +25,11 @@ import torchvision.models as models
 
 parser = argparse.ArgumentParser()
 
-# Hyperparameters sent by the client are passed as command-line arguments to the script.
+# 하이퍼파라미터 설정
 parser.add_argument('--num_epochs', type=int, default=1)
 parser.add_argument('--batch_size', type=int, default=4)
 
-# SageMaker Container environment
+# SageMaker Container 환경 설정
 parser.add_argument('--data', type=str, default=os.environ['SM_CHANNEL_TRAINING'])
 parser.add_argument('--model_dir', type=str, default=os.environ['SM_MODEL_DIR'])
 
@@ -63,8 +63,9 @@ image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
 
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=args.batch_size,
-                                             shuffle=True, num_workers=4)
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], 
+                                              batch_size=args.batch_size,
+                                              shuffle=True, num_workers=4)
               for x in ['train', 'val']}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
 class_names = image_datasets['train'].classes
@@ -129,7 +130,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             print('{:10}: Loss - {:10.4f} | Acc - {:10.2f}%'.format(
                 phase, epoch_loss, epoch_acc))
 
-            # 모델을 깊은 복사(deep copy)함
+            # 모델을 deep copy함
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
@@ -148,10 +149,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
         time_elapsed // 3600, (time_elapsed % 3600)/60))
     print('Best val Acc: {:10.2f}%'.format(best_acc))
 
-    # 가장 나은 모델 가중치를 불러옴
+    # 가장 나은 모델 가중치를 불러와 저장함
     torch.save(best_model_wts, os.path.join(args.model_dir, 'model.pth'))
-    
-    # === Save Model Parameters ===
     logger.info("Model successfully saved at: {}".format(args.model_dir)) 
 
 
@@ -166,8 +165,7 @@ criterion = nn.CrossEntropyLoss()
 # 모든 매개변수들이 최적화되었는지 관찰
 optimizer_ft = optim.SGD(model_ft.parameters(), lr=1e-1, momentum=0.9)
 
-# 5에폭마다 0.1씩 학습률 감소
-# scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.01, steps_per_epoch=len(data_loader))
+# 7에폭마다 0.1씩 학습률 감소
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7,
                                        gamma=0.1)
 
